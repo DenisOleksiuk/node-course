@@ -1,0 +1,23 @@
+{
+  "name": "course",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DenisOleksiuk/node-course.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DenisOleksiuk/node-course/issues"
+  },
+  "homepage": "https://github.com/DenisOleksiuk/node-course#readme",
+  "dependencies": {
+    "mongodb": "^3.6.9"
+  }
+}
