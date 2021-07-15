@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/DenisOleksiuk/node-course#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.9",
     "mongoose": "^5.12.14",
     "validator": "^13.6.0"
