@@ -2,9 +2,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../modules/user");
 
 const auth = async (req, res, next) => {
-  console.log("auth middleware");
   try {
-    const token = req.header("Authorization");
+    const token = req.header("Authorization").replace("Bearer ", "");
     const decoded = jwt.verify(token, "thisMyNodejsCourse");
     const user = await User.findOne({
       _id: decoded._id,
@@ -15,6 +14,7 @@ const auth = async (req, res, next) => {
       throw new Error("No User");
     }
 
+    req.token = token;
     req.user = user;
     next();
   } catch (e) {
