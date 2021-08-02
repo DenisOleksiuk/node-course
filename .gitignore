@@ -1,2 +1,3 @@
 .vscode/
 node_modules/
+mongo-connect.ps1
