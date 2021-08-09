@@ -1,12 +1,16 @@
 const express = require('express');
 const multer = require('multer');
+const sharp = require('sharp');
 const User = require('../modules/user');
-const auth = require('../middleware/auth');
+const auth = require('../middlewares/auth');
+const { sendWelcomeEmail, sendCancellationEmail } = require('../emails/account');
 const router = new express.Router();
 
 router.post('/users', async (req, res) => {
   const user = new User(req.body);
   try {
+    await user.save();
+    sendWelcomeEmail(user.email, user.name)
     const token = await user.generateAuthToken();
     res.status(201).send({ user, token });
   } catch (e) {
@@ -80,7 +84,8 @@ router.patch('/users/me', auth, async (req, res) => {
 
 router.delete('/users/me', auth, async (req, res) => {
   try {
-    req.user.remove();
+    await req.user.remove();
+    sendCancellationEmail(req.user.email, req.user.name);
     res.send(req.user);
   } catch (error) {
     return res.status(500).send(error);
@@ -105,7 +110,11 @@ router.post(
   auth,
   upload.single('avatar'),
   async (req, res) => {
-    req.user.avatar = req.file.buffer;
+    const buffer = await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toBuffer();
+    req.user.avatar = buffer;
     await req.user.save();
     res.send();
   },
@@ -118,6 +127,21 @@ router.delete('/user/me/avatar', auth, async (req, res) => {
   req.user.avatar = undefined;
   await req.user.save();
   res.send();
+});
+
+router.get('/user/:id/avatar', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user || !user.avatar) {
+      throw new Error();
+    }
+
+    res.set('Content-Type', 'image/png');
+    res.send(user.avatar);
+  } catch (error) {
+    res.status(404).send();
+  }
 });
 
 module.exports = router;
